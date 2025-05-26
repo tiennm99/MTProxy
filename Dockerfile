@@ -1,8 +1,10 @@
 # Build stage
-FROM debian:bullseye-slim as builder
+FROM debian:10.13-slim as builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
+    curl \
+    git \
     build-essential \
     libssl-dev \
     zlib1g-dev \
@@ -13,10 +15,10 @@ WORKDIR /app
 COPY . .
 
 # Build MTProxy
-RUN make && make install
+RUN make
 
 # Runtime stage
-FROM debian:bullseye-slim
+FROM debian:10.13-slim
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
@@ -40,11 +42,11 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose ports
 # - 443: Public port for MTProto proxy
-# - 2398: Stats and configuration port (internal)
-EXPOSE 443 2398
+# - 8888: Stats and configuration port (internal)
+EXPOSE 443 8888
 
 # Set entrypoint
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Default command (can be overridden in docker-compose)
-CMD ["mtproto-proxy", "-u", "mtproxy", "-p", "2398", "-H", "443", "--aes-pwd", "/data/proxy-secret", "/data/proxy-multi.conf", "-M", "1"]
+CMD ["mtproto-proxy", "-u", "mtproxy", "-p", "8888", "-H", "443", "--aes-pwd", "/data/proxy-secret", "/data/proxy-multi.conf", "-M", "1"]
