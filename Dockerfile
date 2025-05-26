@@ -1,5 +1,5 @@
 # Build stage
-FROM debian:10.13-slim as builder
+FROM debian:10.13-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy local source code
+# Clone and build MTProxy
 WORKDIR /app
-COPY . .
+RUN git clone https://github.com/TelegramMessenger/MTProxy.git .
 
 # Build MTProxy
 RUN make
