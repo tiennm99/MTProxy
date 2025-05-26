@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mtproxy:
+    build: .
+    container_name: mtproxy
+    restart: unless-stopped
+    user: "1000:1000"
+    ports:
+      - "443:443"
+      - "8888:8888"  # Stats port
+    volumes:
+      - ./data:/data
+    environment:
+      - SECRET=  # Add your generated secret here (optional, can be passed via command line)
+      - TAG=      # Add your proxy tag from @MTProxybot (optional)
+      - WORKERS=1  # Number of worker processes
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65535
+      - net.ipv4.tcp_fin_timeout=30
+    ulimits:
+      nofile:
+        soft: 51200
+        hard: 51200
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
