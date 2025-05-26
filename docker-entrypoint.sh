@@ -13,8 +13,7 @@ if [ ! -f /data/proxy-secret ] || [ ! -f /data/proxy-multi.conf ]; then
 fi
 
 # Set permissions
-chown -R mtproxy:mtproxy /data
-chmod 600 /data/proxy-secret /data/proxy-multi.conf
+chmod 644 /data/proxy-secret /data/proxy-multi.conf
 
 # Generate secret if not provided
 if [ -z "$SECRET" ]; then
@@ -25,7 +24,7 @@ if [ -z "$SECRET" ]; then
 fi
 
 # Build command arguments
-CMD_ARGS="-u mtproxy -p 8888 -H 443 --aes-pwd /data/proxy-secret /data/proxy-multi.conf -M ${WORKERS:-1} -S $SECRET"
+CMD_ARGS="-p 8888 -H 443 -M ${WORKERS:-1} -S $SECRET --aes-pwd /data/proxy-secret /data/proxy-multi.conf"
 
 # Add proxy tag if provided
 if [ -n "$TAG" ]; then

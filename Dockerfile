@@ -3,8 +3,8 @@ FROM debian:10.13-slim as builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
     git \
+    curl \
     build-essential \
     libssl-dev \
     zlib1g-dev \
@@ -25,13 +25,11 @@ RUN apt-get update && apt-get install -y \
     libssl1.1 \
     zlib1g \
     curl \
+    vim-common \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy built binary from builder stage
 COPY --from=builder /app/objs/bin/mtproto-proxy /usr/local/bin/
-
-# Create non-root user
-RUN useradd -r -s /bin/false mtproxy
 
 # Create working directory
 WORKDIR /data
@@ -49,4 +47,4 @@ EXPOSE 443 8888
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Default command (can be overridden in docker-compose)
-CMD ["mtproto-proxy", "-u", "mtproxy", "-p", "8888", "-H", "443", "--aes-pwd", "/data/proxy-secret", "/data/proxy-multi.conf", "-M", "1"]
+CMD ["mtproto-proxy", "-p", "8888", "-H", "443", "-M", "1", "--aes-pwd", "/data/proxy-secret", "/data/proxy-multi.conf"]
