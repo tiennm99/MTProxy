@@ -31,6 +31,9 @@ RUN apt-get update && apt-get install -y \
 # Copy built binary from builder stage
 COPY --from=builder /app/objs/bin/mtproto-proxy /usr/local/bin/
 
+# Create non-root user
+RUN useradd -r -s /bin/false mtproxy
+
 # Create working directory
 WORKDIR /data
 

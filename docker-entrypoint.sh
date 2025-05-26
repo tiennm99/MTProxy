@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Increase file descriptor limits
+ulimit -n 51200
+
 # Create data directory if it doesn't exist
 mkdir -p /data
 cd /data
@@ -31,7 +34,6 @@ if [ -n "$TAG" ]; then
     CMD_ARGS="$CMD_ARGS -P $TAG"
 fi
 
-# Execute MTProxy
-set -- mtproto-proxy $@ $CMD_ARGS
+echo "Starting MTProxy with arguments: $CMD_ARGS"
 
-exec "$@"
+exec mtproto-proxy $CMD_ARGS

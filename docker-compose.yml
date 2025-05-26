@@ -24,6 +24,7 @@ services:
       nofile:
         soft: 51200
         hard: 51200
+    privileged: true
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8888/stats"]
       interval: 30s
